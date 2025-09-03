@@ -1,0 +1,37 @@
+namespace: rohan
+
+replicaCount: 2
+
+image:
+  repository: saiteja2502/userprofileretail   # replace with your image repo
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 3130
+
+mongodb:
+  image: mongo
+  tag: latest
+  username: admin
+  password: admin123
+  database: myDatabase
+  storage: 1Gi
+
+userprofile:
+  sessionSecret: "1234"
+  emailUser: "chagantyteja2502@gmail.com"
+  emailPass: "yxoq bjuk rdnt alzp"
+
+ingress:
+  enabled: false
+  className: nginx
+  host: retail.local
+  path: /
+  pathType: Prefix
+
+config:
+  MONGODB_DATABASE: myDatabase
+  APP_ENV: production
+  APP_DEBUG: "false"

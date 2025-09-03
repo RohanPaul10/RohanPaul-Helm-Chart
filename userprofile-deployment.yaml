@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-userprofile
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-userprofile
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-userprofile
+    spec:
+      containers:
+        - name: usernode-js
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://$(MONGO_USER):$(MONGO_PASS)@{{ .Release.Name }}-mongodb:27017/$(MONGODB_DATABASE)?authSource=admin"
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-mongo-secret
+            - secretRef:
+                name: {{ .Release.Name }}-user-secrets
+            - configMapRef:
+                name: {{ .Release.Name }}-app-config
